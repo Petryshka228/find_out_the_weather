@@ -1,4 +1,4 @@
-import requests
+from requests import get
 
 TRANSLATION_WEATHER = {
     'Light rain': 'Небольшой дождь', 'Moderate rain': 'Умеренный дождь', 'Light rain shower': 'Легкий дождь',
@@ -26,7 +26,7 @@ def revers_str_data(string):
 def get_weather(place):
     url = f'http://api.weatherapi.com/v1/forecast.json?key=a72f7c3e2a14440994b105947232606&q={place}&days=1&aqi=no&alerts=no'
     params = {'text': place}
-    res = requests.get(url, params=params)
+    res = get(url, params=params)
     data = res.json()
     temp_C = str(round(data['current']['temp_c'])) + ' °C'
     wind_metr_sek = str(round(int(data['current']['wind_kph']) * 0.277777778, 2)) + ' м/сек'
@@ -41,24 +41,30 @@ def get_weather(place):
           f"Локальное время: {revers_str_data(data['location']['localtime'])}\n"
           f"Состояние погоды: {condition}\nОблачность: {data['current']['cloud']} %\n"
           f"Температура: {temp_C}\nСкорость ветра: {wind_metr_sek}\n"
+          f"Влажность: {data['current']['humidity']}%\n"
           f"Направление ветра: {TRANSLATION_WIND.get(data['current']['wind_dir'])}\n"
           f"(Последнее обновление данных было: {revers_str_data(data['current']['last_updated'])})")
 
 
-while True:
-    user_answer = input('\n1) Узнать погоду\n'
-                        '2) Выйти\n– ')
-    if user_answer == '2':
-        print('Программа завершила свою работу')
-        break
-    elif user_answer == '1':
-        user_answer2 = input('Введите место: ')
-        try:
-            get_weather(user_answer2)
-        except[KeyError]:
-            print('Ошибка, введите корректные данные')
-    else:
-        print('Ошибка, введите корректный вопрос')
+def connect_to_user():
+    while True:
+        user_answer = input('\n1) Узнать погоду\n'
+                            '2) Выйти\n– ')
+        if user_answer == '2':
+            print('Программа завершила свою работу')
+            break
+        elif user_answer == '1':
+            user_answer2 = input('Введите место: ')
+            try:
+                get_weather(user_answer2)
+            except[KeyError]:
+                print('Ошибка, введите корректные данные')
+        else:
+            print('Ошибка, введите корректный вопрос')
+
+
+if __name__ == '__main__':
+    connect_to_user()
 
 
 
